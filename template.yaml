@@ -1,9 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  mengManager
-
-  Sample SAM Template for mengManager
+Description: mengManager Sample SAM Template for mengManager
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -19,6 +16,7 @@ Resources:
         AllowMethods: "'DELETE,GET,HEAD,OPTIONS,POST,PUT'"
         AllowHeaders: "'*'"
         AllowOrigin: "'*'"
+
   CourseManagingFunctions:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -49,3 +47,6 @@ Outputs:
     Value: !GetAtt CourseManagingFunctions.Arn
   InitCoursesApi:
     Value: !Sub "https://${CourseManagerAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/init"
+  CourseManagerIamRole:
+    Description: "Implicit IAM Role created for  function"
+    Value: !GetAtt CourseManagingFunctionsRole.Arn

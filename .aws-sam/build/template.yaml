@@ -1,10 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'mengManager
-
-  Sample SAM Template for mengManager
-
-  '
+Description: mengManager Sample SAM Template for mengManager
 Globals:
   Function:
     Timeout: 3
@@ -55,3 +51,9 @@ Outputs:
   InitCoursesApi:
     Value:
       Fn::Sub: https://${CourseManagerAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/init
+  CourseManagerIamRole:
+    Description: Implicit IAM Role created for  function
+    Value:
+      Fn::GetAtt:
+      - CourseManagingFunctionsRole
+      - Arn
