@@ -19,7 +19,7 @@ const categories = [
 function readSeedData(category) {
   try {
     const jsonString = fs.readFileSync(
-      "../ece-courses/meng-" + category + ".json"
+      "../resources/ece-courses/meng-" + category + ".json"
     );
     return JSON.parse(jsonString);
   } catch (err) {
