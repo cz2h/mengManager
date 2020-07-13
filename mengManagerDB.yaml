@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+  License: Apache-2.0
+Resources:
+  Courses:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "Courses"
+      AttributeDefinitions:
+        - AttributeName: Department
+          AttributeType: S
+        - AttributeName: CourseCode
+          AttributeType: S
+        - AttributeName: Category
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Department
+          KeyType: HASH
+        - AttributeName: CourseCode
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: gsiCategoryCourses
+          KeySchema:
+            - AttributeName: Category
+              KeyType: HASH
+            - AttributeName: CourseCode
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 2
+            WriteCapacityUnits: 2
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+  Programs:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "Programs"
+      AttributeDefinitions:
+        - AttributeName: Department
+          AttributeType: S
+        - AttributeName: Program
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Department
+          KeyType: HASH
+        - AttributeName: Program
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+Outputs:
+  CourseDynamoDBTable:
+    Value: !Ref "Courses"
+    Export:
+      Name: CourseDynamoDBTable
+  ProgramDynamoDBTable:
+    Value: !Ref "Programs"
+    Export:
+      Name: ProgramDynamoDBTable
