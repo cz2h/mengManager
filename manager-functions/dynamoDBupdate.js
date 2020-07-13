@@ -1,5 +1,7 @@
+// Try `node dynamoDBupdate` run this file.
 const AWS = require("aws-sdk");
-const biomedicalEngineering = require("./ece-courses/meng-biomedical-engineering.json");
+const biomedicalEngineering = require("./resources/ece-courses/meng-biomedical-engineering.json");
+const eceprograms = require("./resources/programs/ece.json");
 
 AWS.config.update({
   accessKeyId: "",
@@ -9,7 +11,7 @@ AWS.config.update({
 
 const DynamoDBClient = new AWS.DynamoDB.DocumentClient();
 
-async function setup(seedData) {
+async function setupCourses(seedData) {
   for (let data of seedData) {
     try {
       const params = {
@@ -28,7 +30,7 @@ async function setup(seedData) {
       };
 
       await DynamoDBClient.put(params).promise();
-      console.log(`Create document succeeded`);
+      console.log(`Create ECE${data.CourseCode} succeeded`);
     } catch (error) {
       console.error(
         `Failed to create document:\n Table: ${"ECE"}\n Data: ${data}\n Error:`,
@@ -38,4 +40,51 @@ async function setup(seedData) {
   }
 }
 
-setup(biomedicalEngineering);
+async function setupPrograms(seedData) {
+  for (let data of seedData) {
+    try {
+      const params = {
+        TableName: "Programs",
+        Item: {
+          Department: data.Department,
+          Program: data.Program,
+          CoursesRequired: data.CoursesRequired,
+          OtherRequirements: data.OtherRequirements,
+        },
+      };
+
+      await DynamoDBClient.put(params).promise();
+      console.log(
+        `Create program  ${data.Department} :  ${data.Program} succeeded`
+      );
+    } catch (error) {
+      console.error(
+        `Failed to create document:\n Table: ${"ECE"}\n Data: ${data}\n Error:`,
+        error
+      );
+    }
+  }
+}
+
+// Sample methods to update our db
+// await setupCourses(biomedicalEngineering);
+// await setupPrograms(eceprograms);
+
+// // Sample Query playground
+// try {
+//   const assignmentParams = {
+//     TableName: "Programs",
+//     ExpressionAttributeValues: {
+//       ":department": "ECE",
+//       ":program": "MENG",
+//     },
+//     KeyConditionExpression: "Department = :department AND Program = :program",
+//   };
+//   DynamoDBClient.query(assignmentParams)
+//     .promise()
+//     .then((res, err) => {
+//       console.log(res.Items);
+//     });
+// } catch (error) {
+//   console.log(error);
+// }
