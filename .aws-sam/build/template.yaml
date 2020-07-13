@@ -9,6 +9,14 @@ Globals:
   Function:
     Timeout: 3
 Resources:
+  CourseManagerAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: '''DELETE,GET,HEAD,OPTIONS,POST,PUT'''
+        AllowHeaders: '''*'''
+        AllowOrigin: '''*'''
   CourseManagingFunctions:
     Type: AWS::Serverless::Function
     Properties:
@@ -20,7 +28,16 @@ Resources:
           Type: Api
           Properties:
             Path: /init
-            Method: post
+            Method: get
+            RestApiId:
+              Ref: CourseManagerAPI
+        GetPrograms:
+          Type: Api
+          Properties:
+            Path: /programs/{programid}
+            Method: get
+            RestApiId:
+              Ref: CourseManagerAPI
       Policies:
       - DynamoDBCrudPolicy:
           TableName:
@@ -35,3 +52,6 @@ Outputs:
       Fn::GetAtt:
       - CourseManagingFunctions
       - Arn
+  InitCoursesApi:
+    Value:
+      Fn::Sub: https://${CourseManagerAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/init

@@ -11,10 +11,18 @@ Globals:
     Timeout: 3
 
 Resources:
+  CourseManagerAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'DELETE,GET,HEAD,OPTIONS,POST,PUT'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
   CourseManagingFunctions:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: manager-functions/
+      CodeUri: manager-functions/ # Referencing to package.json
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
       Events:
@@ -22,7 +30,14 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /init
-            Method: post
+            Method: get
+            RestApiId: !Ref CourseManagerAPI
+        GetPrograms:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /programs/{programid}
+            Method: get
+            RestApiId: !Ref CourseManagerAPI
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !ImportValue CourseDynamoDBTable
@@ -32,3 +47,5 @@ Outputs:
   CourseManagingFunctions:
     Description: "Courses managment functions"
     Value: !GetAtt CourseManagingFunctions.Arn
+  InitCoursesApi:
+    Value: !Sub "https://${CourseManagerAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/init"

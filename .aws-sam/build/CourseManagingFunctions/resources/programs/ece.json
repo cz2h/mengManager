@@ -1,0 +1,27 @@
+[
+  {
+    "Department": "ECE",
+    "Program": "MENG",
+    "CoursesRequired": 9,
+    "OtherRequirements": [
+      {
+        "Title": "Test Title",
+        "Category": "^ECE5\\d{2}$",
+        "limitation": "2 -",
+        "Description": "You can have at most 2 500 level ECE courses."
+      },
+      {
+        "Title": "Test Title 2",
+        "Category": "^ECE5(5\\d{2}|1\\d{3})$",
+        "limitation": "5 +",
+        "Description": "You need to have at least 5 ECE courses."
+      },
+      {
+        "Title": "Test Title 3",
+        "Category": "^(ECE)|(CSC)\\d{3, 4}$",
+        "limitation": "6 +",
+        "Description": "You need to have at least 6 technical courses."
+      }
+    ]
+  }
+]
