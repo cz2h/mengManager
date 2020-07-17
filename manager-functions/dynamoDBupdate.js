@@ -1,3 +1,4 @@
+const { uuid } = require("uuidv4");
 // Try `node dynamoDBupdate` run this file.
 const AWS = require("aws-sdk");
 const biomedicalEngineering = require("./resources/ece-courses/meng-biomedical-engineering.json");
@@ -11,12 +12,44 @@ AWS.config.update({
 
 const DynamoDBClient = new AWS.DynamoDB.DocumentClient();
 
-async function setupCourses(seedData) {
+async function updateCourses(seedData) {
+  // Search if course exist
   for (let data of seedData) {
     try {
-      const params = {
-        TableName: "Courses",
+      const assignmentParams = {
+        TableName: "engCourses",
+        IndexName: "gsiCategoryCourses", // Specify the search index
+        ExpressionAttributeValues: {
+          ":coursecode": data.CourseCode,
+          ":dept": "ECE",
+        },
+        KeyConditionExpression:
+          "Department = :dept AND CourseCode = :coursecode",
+      };
+      const res = await DynamoDBClient.query(assignmentParams).promise();
+      // We can then try to update the Item and modify it.
+      // This is how you update an Item
+      //   res.Items[0].Session = "FUCK";
+      //   console.log(res.Items);
+      //   const newParams = {
+      //     TableName: "engCourses",
+      //     Item: res.Items[0],
+      //   };
+      //   const updateres = await DynamoDBClient.put(newParams).promise();
+    } catch (error) {
+      console.error(`Failed to query:\n ECE${data.CourseCode}\n Error:`, error);
+    }
+  }
+}
+
+async function initCoursesAndCourselist(seedData) {
+  for (let data of seedData) {
+    try {
+      const newId = uuid();
+      const addToCourseParams = {
+        TableName: "engCourses",
         Item: {
+          id: newId,
           Department: "ECE",
           CourseCode: data.CourseCode,
           Session: data.SessionCode,
@@ -28,9 +61,18 @@ async function setupCourses(seedData) {
           Category: data.Category,
         },
       };
+      await DynamoDBClient.put(addToCourseParams).promise();
+      console.log(`engCourse : Create ECE${data.CourseCode} succeeded`);
 
-      await DynamoDBClient.put(params).promise();
-      console.log(`Create ECE${data.CourseCode} succeeded`);
+      const addCourseListParam = {
+        TableName: "engCourselist",
+        Item: {
+          course_code: `ECE${data.CourseCode}${data.SessionCode}`,
+          id: newId,
+        },
+      };
+      await DynamoDBClient.put(addCourseListParam).promise();
+      console.log(`engCourselist : Create ECE${data.CourseCode} succeeded`);
     } catch (error) {
       console.error(
         `Failed to create document:\n Table: ${"ECE"}\n Data: ${data}\n Error:`,
@@ -40,11 +82,11 @@ async function setupCourses(seedData) {
   }
 }
 
-async function setupPrograms(seedData) {
+async function initPrograms(seedData) {
   for (let data of seedData) {
     try {
       const params = {
-        TableName: "Programs",
+        TableName: "engPrograms",
         Item: {
           Department: data.Department,
           Program: data.Program,
@@ -67,10 +109,11 @@ async function setupPrograms(seedData) {
 }
 
 // Sample methods to update our db
-// await setupCourses(biomedicalEngineering);
-// await setupPrograms(eceprograms);
+// initCoursesAndCourselist(biomedicalEngineering.slice(0, 1));
+// initPrograms(eceprograms);
+// updateCourses(biomedicalEngineering.slice(0, 1));
 
-// // Sample Query playground
+// //!!! Sample Query playground !!!
 // try {
 //   const assignmentParams = {
 //     TableName: "Programs",
