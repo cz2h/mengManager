@@ -38,9 +38,12 @@ Resources:
             RestApiId: !Ref CourseManagerAPI
       Policies:
         - DynamoDBCrudPolicy:
+            TableName: !ImportValue CourselistDynamoDBTable
+        - DynamoDBCrudPolicy:
             TableName: !ImportValue CourseDynamoDBTable
         - DynamoDBCrudPolicy:
             TableName: !ImportValue ProgramDynamoDBTable
+
 Outputs:
   CourseManagingFunctions:
     Description: "Courses managment functions"

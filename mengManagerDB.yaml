@@ -2,26 +2,37 @@ AWSTemplateFormatVersion: "2010-09-09"
 Metadata:
   License: Apache-2.0
 Resources:
-  Courses:
+  engCourselist:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "Courses"
+      TableName: "engCourselist"
       AttributeDefinitions:
-        - AttributeName: Department
-          AttributeType: S
-        - AttributeName: CourseCode
-          AttributeType: S
-        - AttributeName: Category
+        - AttributeName: course_code
           AttributeType: S
       KeySchema:
-        - AttributeName: Department
+        - AttributeName: course_code
           KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+  engCourses:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "engCourses"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: Department
+          AttributeType: S
         - AttributeName: CourseCode
-          KeyType: RANGE
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
       GlobalSecondaryIndexes:
         - IndexName: gsiCategoryCourses
           KeySchema:
-            - AttributeName: Category
+            - AttributeName: Department
               KeyType: HASH
             - AttributeName: CourseCode
               KeyType: RANGE
@@ -33,10 +44,10 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
-  Programs:
+  engPrograms:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "Programs"
+      TableName: "engPrograms"
       AttributeDefinitions:
         - AttributeName: Department
           AttributeType: S
@@ -50,13 +61,16 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
-
 Outputs:
   CourseDynamoDBTable:
-    Value: !Ref "Courses"
+    Value: !Ref "engCourses"
     Export:
       Name: CourseDynamoDBTable
   ProgramDynamoDBTable:
-    Value: !Ref "Programs"
+    Value: !Ref "engPrograms"
     Export:
       Name: ProgramDynamoDBTable
+  CourselistDynamoDBTable:
+    Value: !Ref "engCourselist"
+    Export:
+      Name: CourselistDynamoDBTable

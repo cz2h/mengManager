@@ -37,6 +37,9 @@ Resources:
       Policies:
       - DynamoDBCrudPolicy:
           TableName:
+            Fn::ImportValue: CourselistDynamoDBTable
+      - DynamoDBCrudPolicy:
+          TableName:
             Fn::ImportValue: CourseDynamoDBTable
       - DynamoDBCrudPolicy:
           TableName:

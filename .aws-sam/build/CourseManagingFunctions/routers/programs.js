@@ -5,11 +5,10 @@ const { DynamoDBClient } = require("../dynamodb");
 
 router.get("/:programid", async (req, res) => {
   console.log("### GET PROGRAMS :programid ###");
-  console.log(req);
   const queryString = req.params.programid;
   console.log(queryString);
-  const queryDepartment = queryString.split("#")[0].toUpperCase();
-  const queryProgram = queryString.split("#")[1].toUpperCase();
+  const queryDepartment = queryString.split("_")[0].toUpperCase();
+  const queryProgram = queryString.split("_")[1].toUpperCase();
 
   try {
     const assignmentParams = {
@@ -22,7 +21,6 @@ router.get("/:programid", async (req, res) => {
     };
     console.log(`### GET Program ${queryDepartment} ${queryProgram} ###`);
     const queryRes = await DynamoDBClient.query(assignmentParams).promise();
-    console.log(queryRes);
     res.status(200).json(queryRes);
   } catch (error) {
     console.log("!!! GET Program Error!!!", error);
