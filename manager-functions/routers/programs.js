@@ -12,7 +12,7 @@ router.get("/:programid", async (req, res) => {
 
   try {
     const assignmentParams = {
-      TableName: "Programs",
+      TableName: "engPrograms",
       ExpressionAttributeValues: {
         ":department": queryDepartment,
         ":program": queryProgram,

@@ -27,6 +27,7 @@ async function updateCourses(seedData) {
           "Department = :dept AND CourseCode = :coursecode",
       };
       const res = await DynamoDBClient.query(assignmentParams).promise();
+      console.log(res);
       // We can then try to update the Item and modify it.
       // This is how you update an Item
       //   res.Items[0].Session = "FUCK";
@@ -62,12 +63,12 @@ async function initCoursesAndCourselist(seedData) {
         },
       };
       await DynamoDBClient.put(addToCourseParams).promise();
-      console.log(`engCourse : Create ECE${data.CourseCode} succeeded`);
+      console.log(`engCourse : Create ${data.CourseCode} succeeded`);
 
       const addCourseListParam = {
         TableName: "engCourselist",
         Item: {
-          course_code: `ECE${data.CourseCode}${data.SessionCode}`,
+          course_code: `${data.CourseCode}${data.SessionCode}`,
           id: newId,
         },
       };
@@ -108,11 +109,49 @@ async function initPrograms(seedData) {
   }
 }
 
+async function testQueryCourseList(dept, prefixQuery) {
+  try {
+    const queryParamms = {
+      TableName: "Courselist",
+      ExpressionAttributeValues: {
+        ":prefixQuery": prefixQuery,
+        ":dept": dept,
+      },
+      KeyConditionExpression:
+        "department = :dept AND begins_with(course_code, :prefixQuery)",
+    };
+    console.log(
+      `### GET list of satisfied Courses : prefix ${prefixQuery} ###`
+    );
+    const queryRes = await DynamoDBClient.query(queryParamms).promise();
+    console.log(queryRes);
+  } catch (error) {
+    console.log("!!! GET list of satisfied Courses !!!", error);
+  }
+}
+
+async function testQueryDetailCourse(courseId) {
+  try {
+    const queryParamms = {
+      TableName: "engCourses",
+      ExpressionAttributeValues: {
+        ":courseId": courseId,
+      },
+      KeyConditionExpression: "id = :courseId",
+    };
+    const queryRes = await DynamoDBClient.query(queryParamms).promise();
+    console.log(queryRes);
+  } catch (error) {
+    console.log(error);
+  }
+}
 // Sample methods to update our db
 // initCoursesAndCourselist(biomedicalEngineering.slice(0, 1));
 // initPrograms(eceprograms);
 // updateCourses(biomedicalEngineering.slice(0, 1));
 
+// testQueryCourseList("ECE", "17");
+// testQueryDetailCourse("834205ca-0a1b-4396-948e-04a4daf4ac13");
 // //!!! Sample Query playground !!!
 // try {
 //   const assignmentParams = {
