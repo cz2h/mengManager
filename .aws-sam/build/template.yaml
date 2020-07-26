@@ -37,6 +37,13 @@ Resources:
         GetListCourses:
           Type: Api
           Properties:
+            Path: /courses/list/{dept}
+            Method: get
+            RestApiId:
+              Ref: CourseManagerAPI
+        GetListCoursesWithCode:
+          Type: Api
+          Properties:
             Path: /courses/list/{dept}/{code}
             Method: get
             RestApiId:
