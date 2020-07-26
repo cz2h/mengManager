@@ -2,16 +2,20 @@ AWSTemplateFormatVersion: "2010-09-09"
 Metadata:
   License: Apache-2.0
 Resources:
-  engCourselist:
+  Courselist:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "engCourselist"
+      TableName: "Courselist"
       AttributeDefinitions:
+        - AttributeName: department
+          AttributeType: S
         - AttributeName: course_code
           AttributeType: S
       KeySchema:
-        - AttributeName: course_code
+        - AttributeName: department
           KeyType: HASH
+        - AttributeName: course_code
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
@@ -71,6 +75,6 @@ Outputs:
     Export:
       Name: ProgramDynamoDBTable
   CourselistDynamoDBTable:
-    Value: !Ref "engCourselist"
+    Value: !Ref "Courselist"
     Export:
       Name: CourselistDynamoDBTable

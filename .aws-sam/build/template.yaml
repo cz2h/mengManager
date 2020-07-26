@@ -34,6 +34,20 @@ Resources:
             Method: get
             RestApiId:
               Ref: CourseManagerAPI
+        GetListCourses:
+          Type: Api
+          Properties:
+            Path: /courses/list/{dept}/{code}
+            Method: get
+            RestApiId:
+              Ref: CourseManagerAPI
+        GetCourseDetail:
+          Type: Api
+          Properties:
+            Path: /courses/detail/{courseId}
+            Method: get
+            RestApiId:
+              Ref: CourseManagerAPI
       Policies:
       - DynamoDBCrudPolicy:
           TableName:
