@@ -33,7 +33,13 @@ Resources:
         GetPrograms:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /programs/{programid}
+            Path: /programs/detail/{dept}
+            Method: get
+            RestApiId: !Ref CourseManagerAPI
+        GetProgramsExact:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /programs/detail/{dept}/{program}
             Method: get
             RestApiId: !Ref CourseManagerAPI
         GetListCourses:

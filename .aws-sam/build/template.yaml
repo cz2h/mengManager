@@ -30,7 +30,14 @@ Resources:
         GetPrograms:
           Type: Api
           Properties:
-            Path: /programs/{programid}
+            Path: /programs/detail/{dept}
+            Method: get
+            RestApiId:
+              Ref: CourseManagerAPI
+        GetProgramsExact:
+          Type: Api
+          Properties:
+            Path: /programs/detail/{dept}/{program}
             Method: get
             RestApiId:
               Ref: CourseManagerAPI
